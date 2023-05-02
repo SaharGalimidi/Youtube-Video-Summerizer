@@ -37,11 +37,12 @@ def welcome_message():
     name = request.get('name', '') 
     return f'Welcome {name}'
 
+@app.route('/welcome')
 def welcome_page():
-
     return render_template('index.html',
-                            os_type = sys.platform,
-                            os_name = os.name)
+                            os_type=sys.platform,
+                            os_name=os.name)
+
 
 
 # server the app when this file is run
