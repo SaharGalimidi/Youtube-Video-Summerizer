@@ -1,14 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Thermos - building webapis with flask</title>
-</head>
-<body>
-<p>
-    <a href="{{ url_for('index') }}">Home</a>
-    <a href="{{ url_for('about') }}">About</a>
-    <a href="{{ url_for('contact') }}">Contact</a>
-</p>
-</body>
-</html
+<html>
+  <head>
+    <title>YouTube Transcript Summarizer</title>
+    <style>
+      /* Add some basic styles to the page */
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+      }
+      input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+      .summary {
+        margin-top: 20px;
+      }
+      .summary-score {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>YouTube Transcript Summarizer</h1>
+    <form id="summarize-form">
+      <label for="url">Enter a YouTube video URL:</label><br>
+      <input type="text" id="url" name="url"><br>
+      <input type="submit" value="Summarize">
+    </form>
+    <div id="summary" class="summary">
+      <h2>Summary</h2>
+      <p id="summary-text"></p>
+      <p class="summary-score">Summary Score: <span id="summary-score"></span></p>
+    </div>
+    <script>
+      // Add event listener to the form submit button
+      document.getElementById("summarize-form").addEventListener("submit", function(event) {
+        // Prevent the default form submission behavior
+        event.preventDefault();
+
+        // Get the YouTube video URL from the form input
+        var url = document.getElementById("url").value;
+
+        // Send an AJAX request to the Flask backend to summarize the video
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:5000/summarize");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function() {
+          if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            // Parse the response JSON and update the summary and score on the page
+            var response = JSON.parse(xhr.responseText);
+            document.getElementById("summary-text").innerHTML = response.best_summary;
+            document.getElementById("summary-score").innerHTML = response.summary_score;
+          }
+        };
+        xhr.send(JSON.stringify({"url": url}));
+      });
+    </script>
+  </body>
+</html>
